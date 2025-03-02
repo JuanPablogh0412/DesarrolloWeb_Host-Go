@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.host_go.host_go.Dtos.ArrendatarioDto;
-import com.host_go.host_go.Servicios.ArrendatarioServicio;
+import com.host_go.host_go.Dtos.CaliPropiedadDto;
+import com.host_go.host_go.Servicios.CaliPropiedadServicio;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,40 +24,40 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 
 @RestController
-@RequestMapping(value = "/Arrendatario")
-public class ArrendatarioControlador {
+@RequestMapping(value = "/CaliPropiedad")
+public class CaliPropiedadControlador {
 
     @Autowired
-    private ArrendatarioServicio ArrendatarioServicio;
+    private CaliPropiedadServicio CaliPropiedadServicio;
 
     @CrossOrigin
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ArrendatarioDto> get (){
-        return ArrendatarioServicio.get();
+    public List<CaliPropiedadDto> get (){
+        return CaliPropiedadServicio.get();
     }
 
     @CrossOrigin
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ArrendatarioDto get(@PathVariable Integer id){
-        return ArrendatarioServicio.get(id);
+    public CaliPropiedadDto get(@PathVariable Long id){
+        return CaliPropiedadServicio.get(id);
     }
 
     @CrossOrigin
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ArrendatarioDto save(@RequestBody ArrendatarioDto ArrendatarioDto) throws ValidationException{
-        return ArrendatarioServicio.save(ArrendatarioDto);
+    public CaliPropiedadDto save(@RequestBody CaliPropiedadDto CaliPropiedadDto) throws ValidationException{
+        return CaliPropiedadServicio.save(CaliPropiedadDto);
     }
 
     @CrossOrigin
     @PutMapping( produces = MediaType.APPLICATION_JSON_VALUE)
-    public ArrendatarioDto update(@RequestBody ArrendatarioDto ArrendatarioDto) throws ValidationException{
-        return ArrendatarioServicio.update(ArrendatarioDto);
+    public CaliPropiedadDto update(@RequestBody CaliPropiedadDto CaliPropiedadDto) throws ValidationException{
+        return CaliPropiedadServicio.update(CaliPropiedadDto);
     }
 
     @CrossOrigin
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@PathVariable Integer id){
-        ArrendatarioServicio.delete(id);
+    public void delete(@PathVariable Long id){
+        CaliPropiedadServicio.delete(id);
     }
     
 }

@@ -1,4 +1,4 @@
-package com.host_go.host_go.config;
+package com.host_go.host_go.Config;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;

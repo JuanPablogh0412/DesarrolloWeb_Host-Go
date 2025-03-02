@@ -15,14 +15,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Where(clause = "status = 0")
-@SQLDelete(sql = "UPDATE application SET status = 1 WHERE id = ?")
+@Where(clause = "status = 'ACTIVE'") // Filtra solo los activos
+@SQLDelete(sql = "UPDATE calificacion SET status = 'DELETED' WHERE cedula = ?") // Soft delete
 public class Calificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long Calificacion_id;
     private int Estrellas;
     private String Comentario;
+
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVE;
 
     @ManyToOne
     @JoinColumn(name = "Cuenta_id")

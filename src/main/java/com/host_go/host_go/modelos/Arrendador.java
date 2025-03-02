@@ -1,13 +1,12 @@
 package com.host_go.host_go.modelos;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @SuppressWarnings("deprecation")
 @Entity
@@ -15,18 +14,20 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Where(clause = "status = 0")
-@SQLDelete(sql = "UPDATE application SET status = 1 WHERE id = ?")
+@Where(clause = "status = 'ACTIVE'") // Filtra solo los activos
+@SQLDelete(sql = "UPDATE arrendador SET status = 'DELETED' WHERE cedula = ?") // Soft delete
 public class Arrendador {
     @Id
-    private Integer Cedula;
-    private String Nombre;
-    private String Apellido;
-    private String Correo;
-    private int Telefono;
+    private Integer cedula;
+    private String nombre;
+    private String apellido;
+    private String correo;
+    private int telefono;
+
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVE;
 
     @OneToOne
-    @JoinColumn(name = "Cuenta_id")
+    @JoinColumn(name = "cuenta_id")
     private Cuenta cuenta;
-
 }

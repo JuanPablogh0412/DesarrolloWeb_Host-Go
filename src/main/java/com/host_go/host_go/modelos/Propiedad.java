@@ -15,8 +15,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Where(clause = "status = 0")
-@SQLDelete(sql = "UPDATE application SET status = 1 WHERE id = ?")
+@Where(clause = "status = 'ACTIVE'") // Filtra solo los activos
+@SQLDelete(sql = "UPDATE propiedad SET status = 'DELETED' WHERE cedula = ?") // Soft delete
 public class Propiedad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +29,9 @@ public class Propiedad {
     private int Capacidad;
     private int Estado;
 
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVE;
+    
     @ManyToOne
     @JoinColumn(name = "Cedula")
     private Arrendador arrendador;
