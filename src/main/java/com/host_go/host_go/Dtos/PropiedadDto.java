@@ -1,6 +1,5 @@
 package com.host_go.host_go.Dtos;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,16 +9,19 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class PropiedadDto {
-    private long Propiedad_id;
-    private String Nombre;
-    private String Descripcion;
-    private String Ubicacion;
-    private int Precio;
-    private String Tipo;
-    private int Capacidad;
-    private int Estado;
-
+    private long propiedad_id;
+    private String nombre;
+    private String departamento;
+    private String municipio;
+    private String tipoIngreso; // Carretera principal, secundaria, terciaria
+    private String descripcion;
+    private int habitaciones;
+    private int banos;
+    private boolean permiteMascotas;
+    private boolean tienePiscina;
+    private boolean tieneAsador;
+    private int valorNoche;
+    private int estado; // 1 = Activo, 0 = Desactivado
     private ArrendadorDto arrendador;
 }
