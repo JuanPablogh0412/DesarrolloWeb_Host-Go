@@ -17,7 +17,7 @@ spec:
          - name: github-secret
       containers:
          - name: test
-           image: localhost:5000/test:latest
+           image: localhost:5000/host_go:latest
            ports:
               - containerPort: 8080
 ---
