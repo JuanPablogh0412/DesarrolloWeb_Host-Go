@@ -9,12 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArrendadorDto {
-    private long Arrendador_id;
+public class ArrendadorCreateDto {
     private Integer cedula;
     private String nombre;
     private String apellido;
     private String correo;
     private long telefono;
-    private CuentaDto cuenta;
+    private String Contrasena;
 }

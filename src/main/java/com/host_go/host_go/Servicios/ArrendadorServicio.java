@@ -7,11 +7,15 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.host_go.host_go.Dtos.ArrendadorCreateDto;
 import com.host_go.host_go.Dtos.ArrendadorDto;
 import com.host_go.host_go.Repositorios.ArrendadorRepositorio;
+import com.host_go.host_go.Repositorios.CuentaRepositorio;
 import com.host_go.host_go.modelos.Arrendador;
+import com.host_go.host_go.modelos.Cuenta;
 import com.host_go.host_go.modelos.Status;
 
 @Service
@@ -20,7 +24,11 @@ public class ArrendadorServicio {
     @Autowired
     ArrendadorRepositorio arrendadorRepositorio;
     @Autowired
+    private CuentaRepositorio cuentaRepositorio;
+    @Autowired
     ModelMapper modelMapper;
+    @Autowired
+    private PasswordEncoder passwordEncoder; 
 
     public ArrendadorDto get(Integer id){
         Optional<Arrendador> arrendadorOptional = arrendadorRepositorio.findById(id);
@@ -37,11 +45,37 @@ public class ArrendadorServicio {
         return arrendadorDtos;
     }
 
-    public ArrendadorDto save( ArrendadorDto arrendadorDto){
-        Arrendador arrendador = modelMapper.map(arrendadorDto, Arrendador.class);
+    public ArrendadorDto save(ArrendadorCreateDto arrendadorCreateDto) {
+        // Validar correo único
+        if (arrendadorRepositorio.existsByCorreo(arrendadorCreateDto.getCorreo())) {
+            throw new IllegalArgumentException("El correo ya está registrado");
+        }
+
+        // Validar formato de correo corporativo
+        if (!arrendadorCreateDto.getCorreo().endsWith("@javeriana.edu.co")) {
+            throw new IllegalArgumentException("Correo no cumple con el formato corporativo");
+        }
+
+        // Validar contraseña
+        if (arrendadorCreateDto.getContrasena().length() < 8) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
+        }
+
+        // Crear la cuenta asociada
+        Cuenta cuenta = new Cuenta();
+        cuenta.setUsuario(arrendadorCreateDto.getCorreo());
+        cuenta.setContrasena(passwordEncoder.encode(arrendadorCreateDto.getContrasena()));
+        cuenta.setStatus(Status.ACTIVE);
+        cuenta = cuentaRepositorio.save(cuenta);
+
+        // Crear el arrendador
+        Arrendador arrendador = modelMapper.map(arrendadorCreateDto, Arrendador.class);
+        arrendador.setCuenta(cuenta);
         arrendador.setStatus(Status.ACTIVE);
         arrendador = arrendadorRepositorio.save(arrendador);
-        arrendadorDto.setCedula(arrendador.getCedula());
+
+        // Convertir a DTO de respuesta (sin contraseña)
+        ArrendadorDto arrendadorDto = modelMapper.map(arrendador, ArrendadorDto.class);
         return arrendadorDto;
     }
 

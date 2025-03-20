@@ -18,11 +18,13 @@ import org.hibernate.annotations.Where;
 @SQLDelete(sql = "UPDATE arrendador SET status = 'DELETED' WHERE cedula = ?") // Soft delete
 public class Arrendador {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long Arrendador_id;
     private Integer cedula;
     private String nombre;
     private String apellido;
     private String correo;
-    private int telefono;
+    private long telefono;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.ACTIVE;
