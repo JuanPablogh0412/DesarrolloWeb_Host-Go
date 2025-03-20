@@ -19,11 +19,13 @@ import lombok.Setter;
 @SQLDelete(sql = "UPDATE arrendatario SET status = 'DELETED' WHERE cedula = ?") // Soft delete
 public class Arrendatario {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long Arrendatario_id;
     private Integer Cedula;
     private String Nombre;
     private String Apellido;
     private String Correo;
-    private int Telefono;
+    private long Telefono;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.ACTIVE;

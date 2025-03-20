@@ -12,5 +12,4 @@ import lombok.Setter;
 public class CuentaDto {
     private long Cuenta_id;
     private String Usuario;
-    private String Contrasena;
 }

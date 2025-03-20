@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CalificacionDto {
-private long Calificacion_id;
+    private long Calificacion_id;
     private int Estrellas;
     private String Comentario;
     private CuentaDto cuenta;
