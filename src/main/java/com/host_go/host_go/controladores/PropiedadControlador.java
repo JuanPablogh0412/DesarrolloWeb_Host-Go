@@ -61,13 +61,13 @@ public class PropiedadControlador {
         PropiedadServicio.delete(id);
     }
 
-    /* @GetMapping(value = "/buscar", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/buscar", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PropiedadDto> buscarPropiedades(
-     @RequestParam(required = false) String Nombre,
-     @RequestParam(required = false) String Ubicacion,
-     @RequestParam(defaultValue = "0") int Capacidad
+     @RequestParam(required = false) String nombre,
+     @RequestParam(required = false) String ubicacion,
+     @RequestParam(defaultValue = "0") int capacidad
 ) {
-    return PropiedadServicio.buscarPropiedades(Nombre, Ubicacion, Capacidad);
-} */
+    return PropiedadServicio.buscarPropiedades(nombre, ubicacion, capacidad);
+}
     
 }

@@ -61,17 +61,17 @@ public class PropiedadServicio {
         PropiedadRepositorio.deleteById(id);
     }
     
-    /* public List<PropiedadDto> buscarPropiedades(String Nombre, String Ubicacion, int Capacidad) {
+    public List<PropiedadDto> buscarPropiedades(String nombre, String ubicacion, int capacidad) {
         List<Propiedad> propiedades = PropiedadRepositorio
             .findByNombreContainingIgnoreCaseAndUbicacionContainingIgnoreCaseAndCapacidadGreaterThanEqual(
-                Nombre != null ? Nombre : "", 
-                Ubicacion != null ? Ubicacion : "", 
-                Capacidad
+                nombre != null ? nombre : "", 
+                ubicacion != null ? ubicacion : "", 
+                capacidad
             );
         
         return propiedades.stream()
-            .map(Propiedad -> modelMapper.map(Propiedad, PropiedadDto.class))
+            .map(propiedad -> modelMapper.map(propiedad, PropiedadDto.class))
             .collect(Collectors.toList());
-    } */
+    }
 
 }

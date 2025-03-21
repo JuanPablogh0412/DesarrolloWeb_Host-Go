@@ -16,24 +16,24 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Where(clause = "status = 'ACTIVE'") // Filtra solo los activos
-@SQLDelete(sql = "UPDATE solicitud SET status = 'DELETED' WHERE cedula = ?") // Soft delete
+@SQLDelete(sql = "UPDATE solicitud SET status = 'DELETED' WHERE solicitud_id = ?") // Soft delete
 public class Solicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long Solicitud_id;
-    private String FechaInicio;
-    private String FechaFin;
-    private int CantidadPer;
-    private int CostoTotal;
+    private long solicitud_id;
+    private String fechaInicio;
+    private String fechaFin;
+    private int cantidadPer;
+    private int costoTotal;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.ACTIVE;
 
     @ManyToOne
-    @JoinColumn(name = "Propiedad_id")
+    @JoinColumn(name = "propiedad_id")
     private Propiedad propiedad;
     
     @ManyToOne
-    @JoinColumn(name = "Cedula")
+    @JoinColumn(name = "arrendatario_id")
     private Arrendatario arrendatario;
 }

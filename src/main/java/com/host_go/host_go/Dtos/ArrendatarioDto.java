@@ -10,12 +10,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArrendatarioDto {
-    private long Arrendatario_id;
-    private Integer Cedula;
-    private String Nombre;
-    private String Apellido;
-    private String Correo;
-    private long Telefono;
+    private long arrendatario_id;
+    private Integer cedula;
+    private String nombre;
+    private String apellido;
+    private String correo;
+    private long telefono;
     private CuentaDto cuenta;
 
 }

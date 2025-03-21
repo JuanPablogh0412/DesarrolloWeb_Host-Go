@@ -10,11 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SolicitudDto {
-private long Solicitud_id;
-    private String FechaInicio;
-    private String FechaFin;
-    private int CantidadPer;
-    private int CostoTotal;
+    private long solicitud_id;
+    private String fechaInicio;
+    private String fechaFin;
+    private int cantidadPer;
+    private int costoTotal;
 
     private PropiedadDto propiedad;
     private ArrendatarioDto arrendatario;

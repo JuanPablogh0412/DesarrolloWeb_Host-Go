@@ -1,4 +1,4 @@
-package com.host_go.host_go.config;
+package com.host_go.host_go.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
