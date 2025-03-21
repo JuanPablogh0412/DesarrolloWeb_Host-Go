@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PropiedadRepositorio extends JpaRepository<Propiedad,Long>{
-    List<Propiedad> findByNombreContainingIgnoreCaseAndUbicacionContainingIgnoreCaseAndCapacidadGreaterThanEqual(
-        String nombre, 
-        String ubicacion, 
-        int capacidad
-    );
+   /*  List<Propiedad> findByNombreContainingIgnoreCaseAndUbicacionContainingIgnoreCaseAndCapacidadGreaterThanEqual(
+        String Nombre, 
+        String Ubicacion, 
+        int Capacidad
+    ); */
 }
 
