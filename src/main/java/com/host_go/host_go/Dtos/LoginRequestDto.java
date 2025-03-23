@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CuentaDto {
-    private long cuenta_id;
-    private String usuario;
-    private String tipo;
+public class LoginRequestDto {
+    private String correo;
+    private String contrasena;
 }

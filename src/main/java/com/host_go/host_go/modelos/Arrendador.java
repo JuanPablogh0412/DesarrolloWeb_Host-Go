@@ -6,15 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
-@SuppressWarnings("deprecation")
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Where(clause = "status = 'ACTIVE'") // Filtra solo los activos
 @SQLDelete(sql = "UPDATE arrendador SET status = 'DELETED' WHERE arrendador_id = ?") // Soft delete
 public class Arrendador {
     @Id

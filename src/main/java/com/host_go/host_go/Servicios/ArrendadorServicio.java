@@ -1,7 +1,9 @@
 package com.host_go.host_go.Servicios;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -12,8 +14,10 @@ import org.springframework.stereotype.Service;
 
 import com.host_go.host_go.Dtos.ArrendadorCreateDto;
 import com.host_go.host_go.Dtos.ArrendadorDto;
+import com.host_go.host_go.Repositorios.ActivationTokenRepositorio;
 import com.host_go.host_go.Repositorios.ArrendadorRepositorio;
 import com.host_go.host_go.Repositorios.CuentaRepositorio;
+import com.host_go.host_go.modelos.ActivationToken;
 import com.host_go.host_go.modelos.Arrendador;
 import com.host_go.host_go.modelos.Cuenta;
 import com.host_go.host_go.modelos.Status;
@@ -29,6 +33,10 @@ public class ArrendadorServicio {
     ModelMapper modelMapper;
     @Autowired
     private PasswordEncoder passwordEncoder; 
+    @Autowired
+    private ActivationTokenRepositorio activationTokenRepositorio;
+    @Autowired
+    private EmailServicio emailService;
 
     public ArrendadorDto get(Integer id){
         Optional<Arrendador> arrendadorOptional = arrendadorRepositorio.findById(id);
@@ -65,8 +73,15 @@ public class ArrendadorServicio {
         Cuenta cuenta = new Cuenta();
         cuenta.setUsuario(arrendadorCreateDto.getCorreo());
         cuenta.setContrasena(passwordEncoder.encode(arrendadorCreateDto.getContrasena()));
-        cuenta.setStatus(Status.ACTIVE);
+        cuenta.setTipo("ARRENDADOR");
+        cuenta.setStatus(Status.INACTIVE);
         cuenta = cuentaRepositorio.save(cuenta);
+        // Generar token de activación
+        ActivationToken activationToken = createActivationToken(cuenta);
+        
+        // Enviar correo
+        String activationLink = "http://localhost:8080/auth/activate?token=" + activationToken.getToken();
+        emailService.sendActivationEmail(cuenta.getUsuario(), activationLink);
 
         // Crear el arrendador
         Arrendador arrendador = modelMapper.map(arrendadorCreateDto, Arrendador.class);
@@ -94,5 +109,43 @@ public class ArrendadorServicio {
     public void delete (Integer id){
         arrendadorRepositorio.deleteById(id);
     }
+
+    private ActivationToken createActivationToken(Cuenta cuenta) {
+        ActivationToken token = new ActivationToken();
+        token.setToken(UUID.randomUUID().toString());
+        token.setExpirationDate(LocalDateTime.now().plusHours(24));
+        token.setCuenta(cuenta);
+        return activationTokenRepositorio.save(token);
+    }
+
+    public Arrendador validarCredenciales(String correo, String contrasena) {
+        // Buscar la cuenta por correo
+        Cuenta cuenta = cuentaRepositorio.findByUsuario(correo)
+            .orElseThrow(() -> new IllegalArgumentException("Credenciales inválidas"));
+    
+        // Verificar si la cuenta está ACTIVA
+        if (cuenta.getStatus() != Status.ACTIVE) {
+            throw new IllegalArgumentException("La cuenta no está activa");
+        }
+    
+        // Validar contraseña encriptada
+        if (!passwordEncoder.matches(contrasena, cuenta.getContrasena())) {
+
+            throw new IllegalArgumentException("Credenciales inválidas");
+        }
+    
+        // Obtener y retornar el arrendador asociado
+        return arrendadorRepositorio.findByCuenta(cuenta)
+            .orElseThrow(() -> new IllegalArgumentException("Arrendador no encontrado"));
+    }
+
+    public ArrendadorDto obtenerArrendadorPorCorreo(String correo) {
+        Arrendador arrendador = arrendadorRepositorio.findByCorreo(correo)
+            .orElseThrow(() -> new IllegalArgumentException("Arrendador no encontrado"));
+        
+        return modelMapper.map(arrendador, ArrendadorDto.class);
+    }
+
+    
 
 }
