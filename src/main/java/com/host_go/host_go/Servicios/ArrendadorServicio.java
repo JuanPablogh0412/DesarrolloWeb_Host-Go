@@ -86,7 +86,7 @@ public class ArrendadorServicio {
         // Crear el arrendador
         Arrendador arrendador = modelMapper.map(arrendadorCreateDto, Arrendador.class);
         arrendador.setCuenta(cuenta);
-        arrendador.setStatus(Status.ACTIVE);
+        arrendador.setStatus(Status.INACTIVE);
         arrendador = arrendadorRepositorio.save(arrendador);
 
         // Convertir a DTO de respuesta (sin contraseña)

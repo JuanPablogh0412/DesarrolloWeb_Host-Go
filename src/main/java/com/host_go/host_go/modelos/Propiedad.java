@@ -22,11 +22,17 @@ public class Propiedad {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long propiedad_id;
     private String nombre;
+    private String departamento;
+    private String municipio;
+    private String tipoIngreso; // Carretera principal, secundaria, terciaria
     private String descripcion;
-    private String ubicacion;
-    private int precio;
-    private String tipo;
     private int capacidad;
+    private int habitaciones;
+    private int banos;
+    private boolean permiteMascotas;
+    private boolean tienePiscina;
+    private boolean tieneAsador;
+    private int valorNoche;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.ACTIVE;

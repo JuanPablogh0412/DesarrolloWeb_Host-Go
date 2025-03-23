@@ -95,7 +95,7 @@ public class SolicitudServicio {
             LocalDate.parse(fechaInicio),
             LocalDate.parse(fechaFin)
         );
-        return propiedad.getPrecio() * (int) dias;
+        return propiedad.getValorNoche() * (int) dias;
     }
     private void validarCapacidad(Propiedad propiedad, int cantidadPersonas) {
         if (cantidadPersonas > propiedad.getCapacidad()) {

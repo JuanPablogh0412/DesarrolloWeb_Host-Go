@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -96,6 +97,15 @@ public class ActivacionControlador {
     public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequest) {
         try {
             // Autenticar usando Spring Security
+
+            Cuenta cuenta = cuentaRepositorio.findByUsuario(loginRequest.getCorreo())
+                .orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada"));  
+
+            if (cuenta.getStatus() != Status.ACTIVE) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "La cuenta no está activa. Verifica tu correo electrónico."));
+            }
+
             org.springframework.security.core.Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                     loginRequest.getCorreo(),
@@ -107,9 +117,7 @@ public class ActivacionControlador {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String token = jwtUtils.generateToken(userDetails);
 
-            Cuenta cuenta = cuentaRepositorio.findByUsuario(loginRequest.getCorreo())
-                .orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada"));  
-
+            
             if(cuenta.getTipo().equals("ARRENDADOR")){
                 ArrendadorDto arrendador = arrendadorServicio.obtenerArrendadorPorCorreo(loginRequest.getCorreo());
                 // Obtener datos del arrendador para la respuesta

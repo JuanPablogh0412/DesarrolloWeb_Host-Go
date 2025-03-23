@@ -39,7 +39,7 @@ public class CuentaServicio {
 
     public CuentaDto save( CuentaDto CuentaDto){
         Cuenta Cuenta = modelMapper.map(CuentaDto, Cuenta.class);
-        Cuenta.setStatus(Status.ACTIVE);
+        Cuenta.setStatus(Status.INACTIVE);
         Cuenta = CuentaRepositorio.save(Cuenta);
         CuentaDto.setCuenta_id(Cuenta.getCuenta_id());
         return CuentaDto;

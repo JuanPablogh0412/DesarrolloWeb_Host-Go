@@ -16,7 +16,7 @@ import org.hibernate.annotations.SQLDelete;
 public class Arrendador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long arrendador_id;
+    private long arrendadorId;
     private Integer cedula;
     private String nombre;
     private String apellido;
