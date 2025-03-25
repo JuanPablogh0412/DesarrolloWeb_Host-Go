@@ -109,5 +109,18 @@ public class PropiedadControlador {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
     }
-    
+
+        @CrossOrigin
+    @PutMapping(value = "/{id}/desactivar", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> desactivarPropiedad(@PathVariable Long id) {
+        try {
+            PropiedadDto propiedadDesactivada = PropiedadServicio.desactivarPropiedad(id);
+            return ResponseEntity.ok(propiedadDesactivada);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Error al desactivar la propiedad"));
+        }
+    }
 }

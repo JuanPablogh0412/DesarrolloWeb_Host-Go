@@ -154,4 +154,14 @@ public class PropiedadServicio {
         .collect(Collectors.toList());
     }
 
+
+    public PropiedadDto desactivarPropiedad(Long propiedadId){
+        Propiedad propiedadExistente = PropiedadRepositorio.findById(propiedadId)
+        .orElseThrow(() -> new IllegalArgumentException("Propiedad no encontrada"));
+        propiedadExistente.setStatus(Status.INACTIVE);
+        Propiedad propiedadActualizada = PropiedadRepositorio.save(propiedadExistente);
+        return modelMapper.map(propiedadActualizada, PropiedadDto.class);
+
+    }
+
 }
