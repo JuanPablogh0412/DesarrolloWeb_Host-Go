@@ -16,11 +16,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Where(clause = "status = 'ACTIVE'") // Filtra solo los activos
-@SQLDelete(sql = "UPDATE calificacion SET status = 'DELETED' WHERE caliPropiedad_id = ?") // Soft delete
+@SQLDelete(sql = "UPDATE calificacion SET status = 'DELETED' WHERE caliPropiedadId = ?") // Soft delete
 public class CaliPropiedad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long caliPropiedad_id;
+    private long caliPropiedadId;
     private int estrellas;
     private String comentario;
 
@@ -28,6 +28,6 @@ public class CaliPropiedad {
     private Status status = Status.ACTIVE;
 
     @ManyToOne
-    @JoinColumn(name = "propiedad_id")
+    @JoinColumn(name = "propiedadId")
     private Propiedad propiedad;
 }

@@ -41,12 +41,12 @@ public class CalificacionServicio {
         Calificacion Calificacion = modelMapper.map(CalificacionDto, Calificacion.class);
         Calificacion.setStatus(Status.ACTIVE);
         Calificacion = CalificacionRepositorio.save(Calificacion);
-        CalificacionDto.setCalificacion_id(Calificacion.getCalificacion_id());
+        CalificacionDto.setCalificacionId(Calificacion.getCalificacionId());
         return CalificacionDto;
     }
 
     public CalificacionDto update (CalificacionDto CalificacionDto) throws ValidationException{
-        CalificacionDto = get(CalificacionDto.getCalificacion_id());
+        CalificacionDto = get(CalificacionDto.getCalificacionId());
         if(CalificacionDto == null){
             throw new ValidationException(null);//no deja poner string "Registro indefinido" pide lista.
         }

@@ -41,12 +41,12 @@ public class CaliPropiedadServicio {
         CaliPropiedad CaliPropiedad = modelMapper.map(CaliPropiedadDto, CaliPropiedad.class);
         CaliPropiedad.setStatus(Status.ACTIVE);
         CaliPropiedad = CaliPropiedadRepositorio.save(CaliPropiedad);
-        CaliPropiedadDto.setCaliPropiedad_id(CaliPropiedad.getCaliPropiedad_id());
+        CaliPropiedadDto.setCaliPropiedadId(CaliPropiedad.getCaliPropiedadId());
         return CaliPropiedadDto;
     }
 
     public CaliPropiedadDto update (CaliPropiedadDto CaliPropiedadDto) throws ValidationException{
-        CaliPropiedadDto = get(CaliPropiedadDto.getCaliPropiedad_id());
+        CaliPropiedadDto = get(CaliPropiedadDto.getCaliPropiedadId());
         if(CaliPropiedadDto == null){
             throw new ValidationException(null);//no deja poner string "Registro indefinido" pide lista.
         }

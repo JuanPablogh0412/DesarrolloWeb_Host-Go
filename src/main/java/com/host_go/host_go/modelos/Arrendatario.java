@@ -13,11 +13,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE arrendatario SET status = 'DELETED' WHERE arrendatario_id = ?") // Soft delete
+@SQLDelete(sql = "UPDATE arrendatario SET status = 'DELETED' WHERE arrendatarioId = ?") // Soft delete
 public class Arrendatario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long arrendatario_id;
+    private long arrendatarioId;
     private Integer cedula;
     private String nombre;
     private String apellido;
@@ -28,6 +28,6 @@ public class Arrendatario {
     private Status status = Status.ACTIVE;
 
     @OneToOne
-    @JoinColumn(name = "cuenta_id")
+    @JoinColumn(name = "cuentaId")
     private Cuenta cuenta;
 }

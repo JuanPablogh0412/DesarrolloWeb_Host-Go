@@ -11,5 +11,7 @@ public interface PropiedadRepositorio extends JpaRepository<Propiedad,Long>{
         String municipio, 
         int capacidad
     );
+
+    List<Propiedad> findByArrendadorArrendadorId(Long arrendadorId);
 }
 

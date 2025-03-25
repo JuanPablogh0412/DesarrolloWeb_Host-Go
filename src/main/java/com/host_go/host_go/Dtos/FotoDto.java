@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FotoDto {
-    private long foto_id;
+    private long fotoId;
     private String url;
     private PropiedadDto propiedad;
 }

@@ -13,11 +13,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE cuenta SET status = 'DELETED' WHERE cuenta_id = ?") // Soft delete
+@SQLDelete(sql = "UPDATE cuenta SET status = 'DELETED' WHERE cuentaId = ?") // Soft delete
 public class Cuenta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long cuenta_id;
+    private long cuentaId;
     private String usuario;
     private String contrasena;
     private String tipo; // Valores posibles: "ARRENDADOR", "ARRENDATARIO", "ADMIN"

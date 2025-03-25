@@ -12,7 +12,7 @@ import org.hibernate.annotations.SQLDelete;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE arrendador SET status = 'DELETED' WHERE arrendador_id = ?") // Soft delete
+@SQLDelete(sql = "UPDATE arrendador SET status = 'DELETED' WHERE arrendadorId = ?") // Soft delete
 public class Arrendador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,6 @@ public class Arrendador {
     private Status status = Status.ACTIVE;
 
     @OneToOne
-    @JoinColumn(name = "cuenta_id")
+    @JoinColumn(name = "cuentaId")
     private Cuenta cuenta;
 }

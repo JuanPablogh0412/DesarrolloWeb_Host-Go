@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class PropiedadDto {
-    private long propiedad_id;
+    private long propiedadId;
     private String nombre;
     private String departamento;
     private String municipio;

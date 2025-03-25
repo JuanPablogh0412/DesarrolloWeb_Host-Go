@@ -49,7 +49,7 @@ public class SolicitudServicio {
 
     public SolicitudDto save( SolicitudDto SolicitudDto){
         validarFechas(SolicitudDto.getFechaInicio(), SolicitudDto.getFechaFin());
-        Propiedad propiedad = validarPropiedad(SolicitudDto.getPropiedad().getPropiedad_id());
+        Propiedad propiedad = validarPropiedad(SolicitudDto.getPropiedad().getPropiedadId());
         validarArrendatario(SolicitudDto.getArrendatario().getCedula());
         validarCapacidad(propiedad, SolicitudDto.getCantidadPer());
         SolicitudDto.setCostoTotal(calcularCostoTotal(propiedad, SolicitudDto.getFechaInicio(), SolicitudDto.getFechaFin()));
@@ -60,7 +60,7 @@ public class SolicitudServicio {
     }
 
     public SolicitudDto update (SolicitudDto SolicitudDto) throws ValidationException{
-        SolicitudDto = get(SolicitudDto.getSolicitud_id());
+        SolicitudDto = get(SolicitudDto.getSolicitudId());
         if(SolicitudDto == null){
             throw new ValidationException(null);//no deja poner string "Registro indefinido" pide lista.
         }

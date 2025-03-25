@@ -41,12 +41,12 @@ public class FotoServicio {
         Foto Foto = modelMapper.map(FotoDto, Foto.class);
         Foto.setStatus(Status.ACTIVE);
         Foto = FotoRepositorio.save(Foto);
-        FotoDto.setFoto_id(Foto.getFoto_id());
+        FotoDto.setFotoId(Foto.getFotoId());
         return FotoDto;
     }
 
     public FotoDto update (FotoDto FotoDto) throws ValidationException{
-        FotoDto = get(FotoDto.getFoto_id());
+        FotoDto = get(FotoDto.getFotoId());
         if(FotoDto == null){
             throw new ValidationException(null);//no deja poner string "Registro indefinido" pide lista.
         }
