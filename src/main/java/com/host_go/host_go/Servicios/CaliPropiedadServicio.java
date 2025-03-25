@@ -4,23 +4,32 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.catalina.connector.Response;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.host_go.host_go.Dtos.CaliPropiedadDto;
 import com.host_go.host_go.Repositorios.CaliPropiedadRepositorio;
 import com.host_go.host_go.modelos.CaliPropiedad;
 import com.host_go.host_go.modelos.Status;
+import com.host_go.host_go.modelos.Propiedad;
 
 @Service
 public class CaliPropiedadServicio {
 
+    
+
+    @Autowired
+    private PropiedadServicio propiedadServicio;
     @Autowired
     CaliPropiedadRepositorio CaliPropiedadRepositorio;
     @Autowired
     ModelMapper modelMapper;
+
+    
 
     public CaliPropiedadDto get(Long id){
         Optional<CaliPropiedad> CaliPropiedadOptional = CaliPropiedadRepositorio.findById(id);
@@ -59,6 +68,21 @@ public class CaliPropiedadServicio {
 
     public void delete (Long id){
         CaliPropiedadRepositorio.deleteById(id);
+    }
+
+    public ResponseEntity<?> calificarPropiedad(int estrellas, String comentario, String nombrePropiedad, String ubicacion){
+        Optional<Propiedad> propiedadOpt = propiedadServicio.buscarPorNombreYUbicacion(nombrePropiedad, ubicacion);
+        if(propiedadOpt.isEmpty()){
+            return ResponseEntity.badRequest().body("no se encontro la propiedad");
+        }
+        long caliPropId = CaliPropiedadRepositorio.count()+1;
+        CaliPropiedad calificacion = new CaliPropiedad();
+        calificacion.setCaliPropiedad_id(caliPropId);
+        calificacion.setEstrellas(estrellas);
+        calificacion.setComentario(comentario);
+        calificacion.setPropiedad(propiedadOpt.get());
+        CaliPropiedadRepositorio.save(calificacion);
+        return ResponseEntity.ok("Calificacion guardada correctamente");
     }
 
 }

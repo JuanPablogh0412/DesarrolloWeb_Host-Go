@@ -7,20 +7,25 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.host_go.host_go.Dtos.CalificacionDto;
 import com.host_go.host_go.Repositorios.CalificacionRepositorio;
 import com.host_go.host_go.modelos.Calificacion;
+import com.host_go.host_go.modelos.Cuenta;
 import com.host_go.host_go.modelos.Status;
 
 @Service
 public class CalificacionServicio {
-
+    
+    @Autowired
+    private CuentaServicio cuentaServicio;
     @Autowired
     CalificacionRepositorio CalificacionRepositorio;
     @Autowired
     ModelMapper modelMapper;
+    
 
     public CalificacionDto get(Long id){
         Optional<Calificacion> CalificacionOptional = CalificacionRepositorio.findById(id);
@@ -55,6 +60,23 @@ public class CalificacionServicio {
         Calificacion = CalificacionRepositorio.save(Calificacion);
         CalificacionDto = modelMapper.map(Calificacion, CalificacionDto.class);
         return CalificacionDto;
+    }
+
+    public ResponseEntity<?> calificarUsuario(int estrellas, String comentario, String usuario){
+        Optional<Cuenta> cuentaOpt = cuentaServicio.buscarPorUsuario(usuario);
+        if(cuentaOpt.isEmpty()){
+            return ResponseEntity.badRequest().body("Usuario a calificar no encontrado");
+        }
+        long caliId = CalificacionRepositorio.count()+1;
+        Calificacion calificacion = new Calificacion();
+        calificacion.setCalificacion_id(caliId);
+        calificacion.setEstrellas(estrellas);
+        calificacion.setComentario(comentario);
+        calificacion.setCuenta(cuentaOpt.get());
+
+        CalificacionRepositorio.save(calificacion);
+        return ResponseEntity.ok("Calificacion guardada correctamente");
+
     }
 
     public void delete (Long id){

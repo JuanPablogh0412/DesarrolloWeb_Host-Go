@@ -61,4 +61,9 @@ public class CuentaServicio {
         CuentaRepositorio.deleteById(id);
     }
 
+    public Optional<Cuenta> buscarPorUsuario(String usuario){
+        return CuentaRepositorio.findByUsuario(usuario);
+    }
+
 }
+

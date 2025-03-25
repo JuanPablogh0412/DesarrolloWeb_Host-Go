@@ -5,9 +5,11 @@ import java.util.List;
 import org.modelmapper.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.host_go.host_go.Dtos.CaliPropiedadDto;
@@ -27,8 +29,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping(value = "/CaliPropiedad")
 public class CaliPropiedadControlador {
 
+    
+
+    
+
     @Autowired
     private CaliPropiedadServicio CaliPropiedadServicio;
+    
 
     @CrossOrigin
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -59,5 +66,19 @@ public class CaliPropiedadControlador {
     public void delete(@PathVariable Long id){
         CaliPropiedadServicio.delete(id);
     }
-    
+
+    //Backend calificar propiedad
+    public ResponseEntity<?> calificarPropiedad(
+        @RequestParam int estrellas,
+        @RequestParam String comentario,
+        @RequestParam String nombrePropiedad,
+        @RequestParam String ubicacion
+    ){
+        if(estrellas<=0 || comentario.isEmpty() || nombrePropiedad.isEmpty() || ubicacion.isEmpty()){
+            return ResponseEntity.badRequest().body("Todos los elementos son obligatorios");
+        }
+        return CaliPropiedadServicio.calificarPropiedad(estrellas, comentario, nombrePropiedad, ubicacion);
+    }
 }
+    
+

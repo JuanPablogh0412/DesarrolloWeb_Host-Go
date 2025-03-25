@@ -61,4 +61,8 @@ public class PropiedadServicio {
         PropiedadRepositorio.deleteById(id);
     }
 
+    public Optional<Propiedad> buscarPorNombreYUbicacion(String nombre, String ubicacion){
+        return PropiedadRepositorio.findByNombreYUbicacion(nombre, ubicacion);
+    }
+
 }

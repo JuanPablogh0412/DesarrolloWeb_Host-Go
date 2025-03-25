@@ -4,4 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CalificacionRepositorio extends JpaRepository<Calificacion, Long>{
 
+    long count();
+
 }

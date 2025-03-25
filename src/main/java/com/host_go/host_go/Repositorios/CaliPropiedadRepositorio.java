@@ -4,4 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CaliPropiedadRepositorio extends JpaRepository<CaliPropiedad, Long>{
 
+    long count();
+
 }
