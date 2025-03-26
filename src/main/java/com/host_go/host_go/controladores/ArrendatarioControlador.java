@@ -41,7 +41,7 @@ public class ArrendatarioControlador {
 
     @CrossOrigin
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ArrendatarioDto get(@PathVariable Integer id){
+    public ArrendatarioDto get(@PathVariable Long id){
         return ArrendatarioServicio.get(id);
     }
 
@@ -70,7 +70,7 @@ public class ArrendatarioControlador {
 
     @CrossOrigin
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@PathVariable Integer id){
+    public void delete(@PathVariable Long id){
         ArrendatarioServicio.delete(id);
     }
     

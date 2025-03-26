@@ -16,6 +16,7 @@ import com.host_go.host_go.Dtos.SolicitudDto;
 import com.host_go.host_go.Repositorios.ArrendatarioRepositorio;
 import com.host_go.host_go.Repositorios.PropiedadRepositorio;
 import com.host_go.host_go.Repositorios.SolicitudRepositorio;
+import com.host_go.host_go.modelos.Arrendatario;
 import com.host_go.host_go.modelos.Propiedad;
 import com.host_go.host_go.modelos.Solicitud;
 import com.host_go.host_go.modelos.Status;
@@ -49,12 +50,18 @@ public class SolicitudServicio {
 
     public SolicitudDto save( SolicitudDto SolicitudDto){
         validarFechas(SolicitudDto.getFechaInicio(), SolicitudDto.getFechaFin());
-        Propiedad propiedad = validarPropiedad(SolicitudDto.getPropiedad().getPropiedadId());
-        validarArrendatario(SolicitudDto.getArrendatario().getCedula());
+        Solicitud solicitud = modelMapper.map(SolicitudDto, Solicitud.class);
+        Propiedad propiedad = propiedadRepositorio.findByPropiedadId(SolicitudDto.getPropiedad().getPropiedadId())
+            .orElseThrow(() -> new IllegalArgumentException("Propiedad no encontrado"));
+        solicitud.setPropiedad(propiedad);
+
+        Arrendatario arrendatario = arrendatarioRepositorio.findByArrendatarioId(SolicitudDto.getArrendatario().getArrendatarioId())
+            .orElseThrow(() -> new IllegalArgumentException("Arrendador no encontrado"));
+        solicitud.setArrendatario(arrendatario);
+
         validarCapacidad(propiedad, SolicitudDto.getCantidadPer());
         SolicitudDto.setCostoTotal(calcularCostoTotal(propiedad, SolicitudDto.getFechaInicio(), SolicitudDto.getFechaFin()));
-        Solicitud solicitud = modelMapper.map(SolicitudDto, Solicitud.class);
-        solicitud.setStatus(Status.ACTIVE);
+        solicitud.setStatus(Status.INACTIVE);
         solicitud = SolicitudRepositorio.save(solicitud);
         return modelMapper.map(solicitud, SolicitudDto.class);
     }
@@ -74,10 +81,7 @@ public class SolicitudServicio {
     public void delete (Long id){
         SolicitudRepositorio.deleteById(id);
     }
-    private void validarArrendatario(Integer cedula) {
-        arrendatarioRepositorio.findById(cedula)
-            .orElseThrow(() -> new IllegalArgumentException("Arrendatario no encontrado"));
-    }
+    
     private void validarFechas(String fechaInicio, String fechaFin) {
         LocalDate inicio = LocalDate.parse(fechaInicio);
         LocalDate fin = LocalDate.parse(fechaFin);
@@ -86,10 +90,7 @@ public class SolicitudServicio {
             throw new IllegalArgumentException("La fecha fin no puede ser anterior a la fecha inicio");
         }
     }
-    private Propiedad validarPropiedad(Long propiedadId) {
-        return propiedadRepositorio.findById(propiedadId)
-            .orElseThrow(() -> new IllegalArgumentException("Propiedad no encontrada"));
-    }
+    
     private int calcularCostoTotal(Propiedad propiedad, String fechaInicio, String fechaFin) {
         long dias = ChronoUnit.DAYS.between(
             LocalDate.parse(fechaInicio),

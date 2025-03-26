@@ -6,8 +6,9 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ArrendatarioRepositorio extends JpaRepository<Arrendatario, Integer>{
+public interface ArrendatarioRepositorio extends JpaRepository<Arrendatario, Long>{
 boolean existsByCorreo(String correo); 
+    Optional<Arrendatario> findByArrendatarioId(long arrendatarioId);
     Optional<Arrendatario> findByCorreo(String correo);
     Optional<Arrendatario> findByCuenta(Cuenta cuenta);
 }

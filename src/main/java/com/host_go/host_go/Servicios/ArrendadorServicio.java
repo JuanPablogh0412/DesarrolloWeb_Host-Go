@@ -38,7 +38,7 @@ public class ArrendadorServicio {
     @Autowired
     private EmailServicio emailService;
 
-    public ArrendadorDto get(Integer id){
+    public ArrendadorDto get(Long id){
         Optional<Arrendador> arrendadorOptional = arrendadorRepositorio.findById(id);
         ArrendadorDto arrendadorDto = null;
         if( arrendadorOptional != null){
@@ -95,7 +95,7 @@ public class ArrendadorServicio {
     }
 
     public ArrendadorDto update (ArrendadorDto arrendadorDto) throws ValidationException{
-        arrendadorDto = get(arrendadorDto.getCedula());
+        arrendadorDto = get(arrendadorDto.getArrendadorId());
         if(arrendadorDto == null){
             throw new ValidationException(null);//no deja poner string "Registro indefinido" pide lista.
         }
@@ -106,7 +106,7 @@ public class ArrendadorServicio {
         return arrendadorDto;
     }
 
-    public void delete (Integer id){
+    public void delete (Long id){
         arrendadorRepositorio.deleteById(id);
     }
 

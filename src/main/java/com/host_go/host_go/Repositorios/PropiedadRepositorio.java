@@ -2,6 +2,7 @@ package com.host_go.host_go.Repositorios;
 import com.host_go.host_go.modelos.Propiedad;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,5 +13,6 @@ public interface PropiedadRepositorio extends JpaRepository<Propiedad,Long>{
         int capacidad
     );
     List<Propiedad> findByArrendadorArrendadorId(Long arrendadorId);
+    Optional<Propiedad> findByPropiedadId(long propiedadId);
 }
 

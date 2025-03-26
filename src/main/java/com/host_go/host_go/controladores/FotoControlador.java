@@ -1,5 +1,6 @@
 package com.host_go.host_go.controladores;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.modelmapper.ValidationException;
@@ -8,7 +9,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.host_go.host_go.Dtos.FotoDto;
 import com.host_go.host_go.Servicios.FotoServicio;
@@ -58,6 +61,15 @@ public class FotoControlador {
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@PathVariable Long id){
         FotoServicio.delete(id);
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "/propiedad/{propiedadId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public FotoDto subirFoto(
+        @PathVariable Long propiedadId,
+        @RequestParam("archivo") MultipartFile archivo) throws IOException {
+
+        return FotoServicio.subirFoto(propiedadId, archivo);
     }
     
 }

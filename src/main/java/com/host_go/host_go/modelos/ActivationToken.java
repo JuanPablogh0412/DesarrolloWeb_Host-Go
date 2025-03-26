@@ -26,6 +26,6 @@ public class ActivationToken {
     private LocalDateTime expirationDate;
     
     @OneToOne
-    @JoinColumn(name = "cuenta_id")
+    @JoinColumn(name = "cuentaId")
     private Cuenta cuenta;
 }

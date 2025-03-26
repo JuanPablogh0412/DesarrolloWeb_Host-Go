@@ -1,6 +1,8 @@
 package com.host_go.host_go.Dtos;
 
 
+import com.host_go.host_go.modelos.Status;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +27,7 @@ public class PropiedadDto {
     private boolean tienePiscina;
     private boolean tieneAsador;
     private int valorNoche;
+    private Status status;
 
     private ArrendadorDto arrendador;
 }
