@@ -14,5 +14,6 @@ public interface PropiedadRepositorio extends JpaRepository<Propiedad,Long>{
     );
     List<Propiedad> findByArrendadorArrendadorId(Long arrendadorId);
     Optional<Propiedad> findByPropiedadId(long propiedadId);
+    boolean existsByPropiedadId(long propiedadId);
 }
 

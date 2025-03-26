@@ -33,43 +33,46 @@ public class SolicitudServicio {
     @Autowired
     ModelMapper modelMapper;
 
-    public SolicitudDto get(Long id){
+    public SolicitudDto get(Long id) {
         Optional<Solicitud> SolicitudOptional = SolicitudRepositorio.findById(id);
         SolicitudDto SolicitudDto = null;
-        if( SolicitudOptional != null){
+        if (SolicitudOptional != null) {
             SolicitudDto = modelMapper.map(SolicitudOptional.get(), SolicitudDto.class);
         }
         return SolicitudDto;
     }
 
-    public List<SolicitudDto> get( ){
-        List<Solicitud>Solicituds = (List<Solicitud>) SolicitudRepositorio.findAll();
-        List<SolicitudDto> SolicitudDtos = Solicituds.stream().map(Solicitud -> modelMapper.map(Solicitud, SolicitudDto.class)).collect(Collectors.toList());
+    public List<SolicitudDto> get() {
+        List<Solicitud> Solicituds = (List<Solicitud>) SolicitudRepositorio.findAll();
+        List<SolicitudDto> SolicitudDtos = Solicituds.stream()
+                .map(Solicitud -> modelMapper.map(Solicitud, SolicitudDto.class)).collect(Collectors.toList());
         return SolicitudDtos;
     }
 
-    public SolicitudDto save( SolicitudDto SolicitudDto){
+    public SolicitudDto save(SolicitudDto SolicitudDto) {
         validarFechas(SolicitudDto.getFechaInicio(), SolicitudDto.getFechaFin());
         Solicitud solicitud = modelMapper.map(SolicitudDto, Solicitud.class);
         Propiedad propiedad = propiedadRepositorio.findByPropiedadId(SolicitudDto.getPropiedad().getPropiedadId())
-            .orElseThrow(() -> new IllegalArgumentException("Propiedad no encontrado"));
+                .orElseThrow(() -> new IllegalArgumentException("Propiedad no encontrado"));
         solicitud.setPropiedad(propiedad);
 
-        Arrendatario arrendatario = arrendatarioRepositorio.findByArrendatarioId(SolicitudDto.getArrendatario().getArrendatarioId())
-            .orElseThrow(() -> new IllegalArgumentException("Arrendador no encontrado"));
+        Arrendatario arrendatario = arrendatarioRepositorio
+                .findByArrendatarioId(SolicitudDto.getArrendatario().getArrendatarioId())
+                .orElseThrow(() -> new IllegalArgumentException("Arrendador no encontrado"));
         solicitud.setArrendatario(arrendatario);
 
         validarCapacidad(propiedad, SolicitudDto.getCantidadPer());
-        SolicitudDto.setCostoTotal(calcularCostoTotal(propiedad, SolicitudDto.getFechaInicio(), SolicitudDto.getFechaFin()));
+        SolicitudDto.setCostoTotal(
+                calcularCostoTotal(propiedad, SolicitudDto.getFechaInicio(), SolicitudDto.getFechaFin()));
         solicitud.setStatus(Status.INACTIVE);
         solicitud = SolicitudRepositorio.save(solicitud);
         return modelMapper.map(solicitud, SolicitudDto.class);
     }
 
-    public SolicitudDto update (SolicitudDto SolicitudDto) throws ValidationException{
+    public SolicitudDto update(SolicitudDto SolicitudDto) throws ValidationException {
         SolicitudDto = get(SolicitudDto.getSolicitudId());
-        if(SolicitudDto == null){
-            throw new ValidationException(null);//no deja poner string "Registro indefinido" pide lista.
+        if (SolicitudDto == null) {
+            throw new ValidationException(null);// no deja poner string "Registro indefinido" pide lista.
         }
         Solicitud Solicitud = modelMapper.map(SolicitudDto, Solicitud.class);
         Solicitud.setStatus(Status.ACTIVE);
@@ -78,50 +81,61 @@ public class SolicitudServicio {
         return SolicitudDto;
     }
 
-    public void delete (Long id){
+    public void delete(Long id) {
         SolicitudRepositorio.deleteById(id);
     }
-    
+
     private void validarFechas(String fechaInicio, String fechaFin) {
         LocalDate inicio = LocalDate.parse(fechaInicio);
         LocalDate fin = LocalDate.parse(fechaFin);
-        
+
         if (fin.isBefore(inicio)) {
             throw new IllegalArgumentException("La fecha fin no puede ser anterior a la fecha inicio");
         }
     }
-    
+
     private int calcularCostoTotal(Propiedad propiedad, String fechaInicio, String fechaFin) {
         long dias = ChronoUnit.DAYS.between(
-            LocalDate.parse(fechaInicio),
-            LocalDate.parse(fechaFin)
-        );
+                LocalDate.parse(fechaInicio),
+                LocalDate.parse(fechaFin));
         return propiedad.getValorNoche() * (int) dias;
     }
+
     private void validarCapacidad(Propiedad propiedad, int cantidadPersonas) {
         if (cantidadPersonas > propiedad.getCapacidad()) {
             throw new IllegalArgumentException("La cantidad de personas excede la capacidad de la propiedad");
         }
-}
-public List<SolicitudDto> buscarSolicitudes(Long propiedadId, String cedulaArrendatario, String fechaInicio, String fechaFin) {
-    Specification<Solicitud> spec = Specification.where(null);
+    }
+
+    public List<SolicitudDto> buscarSolicitudes(Long propiedadId, String cedulaArrendatario, String fechaInicio,
+            String fechaFin) {
+        Specification<Solicitud> spec = Specification.where(null);
+
+        if (propiedadId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("propiedad").get("propiedad_id"), propiedadId));
+        }
+        if (cedulaArrendatario != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("arrendatario").get("cedula"), cedulaArrendatario));
+        }
+        if (fechaInicio != null && fechaFin != null) {
+            LocalDate inicio = LocalDate.parse(fechaInicio);
+            LocalDate fin = LocalDate.parse(fechaFin);
+            spec = spec.and((root, query, cb) -> cb.between(root.get("fechaInicio"), inicio, fin));
+        }
+        return SolicitudRepositorio.findAll(spec).stream()
+                .map(s -> modelMapper.map(s, SolicitudDto.class))
+                .collect(Collectors.toList());
+    }
+
+    public List<SolicitudDto> obtenerSolicitudesPorPropiedad(Long propiedadId) {
+        if (!propiedadRepositorio.existsByPropiedadId(propiedadId)) {
+            throw new IllegalArgumentException("Propiedad no encontrada"); 
+        }
+        List<Solicitud> solicitudes = SolicitudRepositorio.findByPropiedadPropiedadId(propiedadId);
+        
+        return solicitudes.stream()
+            .map(s -> modelMapper.map(s, SolicitudDto.class))
+            .collect(Collectors.toList());
+    }
     
-    if (propiedadId != null) {
-        spec = spec.and((root, query, cb) -> 
-            cb.equal(root.get("propiedad").get("propiedad_id"), propiedadId));
-    }
-    if (cedulaArrendatario != null) {
-        spec = spec.and((root, query, cb) -> 
-            cb.equal(root.get("arrendatario").get("cedula"), cedulaArrendatario));
-    }
-    if (fechaInicio != null && fechaFin != null) {
-        LocalDate inicio = LocalDate.parse(fechaInicio);
-        LocalDate fin = LocalDate.parse(fechaFin);
-        spec = spec.and((root, query, cb) -> 
-            cb.between(root.get("fechaInicio"), inicio, fin));
-    }
-    return SolicitudRepositorio.findAll(spec).stream()
-        .map(s -> modelMapper.map(s, SolicitudDto.class))
-        .collect(Collectors.toList());
-}
 }

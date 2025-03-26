@@ -67,8 +67,12 @@ public class SolicitudControlador {
     @RequestParam(required = false) String cedulaArrendatario,
     @RequestParam(required = false) String fechaInicio,
     @RequestParam(required = false) String fechaFin
-) {
-    return SolicitudServicio.buscarSolicitudes(propiedadId, cedulaArrendatario, fechaInicio, fechaFin);
-}
+    ) {
+        return SolicitudServicio.buscarSolicitudes(propiedadId, cedulaArrendatario, fechaInicio, fechaFin);
+    }
+
+    
+
+    
     
 }

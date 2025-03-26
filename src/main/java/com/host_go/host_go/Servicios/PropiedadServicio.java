@@ -128,7 +128,7 @@ public class PropiedadServicio {
             throw new IllegalArgumentException("Debe haber al menos una habitación.");
         }
         if (propiedadDto.getBanos() <= 0) {
-            throw new IllegalArgumentException("Debe haber al menos un baño.");
+            throw new IllegalArgumentException("Debe haberSolicitudDto al menos un baño.");
         }
         if (propiedadDto.getValorNoche() <= 0) {
             throw new IllegalArgumentException("El valor por noche debe ser mayor a 0.");
