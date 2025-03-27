@@ -20,9 +20,9 @@ import lombok.Setter;
 public class Cuenta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long Cuenta_id;
-    private String Usuario;
-    private String Contrasena;
+    private long cuenta_id;
+    private String usuario;
+    private String contrasena;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.ACTIVE;

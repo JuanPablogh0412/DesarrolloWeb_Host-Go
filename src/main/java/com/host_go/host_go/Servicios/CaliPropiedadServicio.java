@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.catalina.connector.Response;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,7 @@ public class CaliPropiedadServicio {
     }
 
     public ResponseEntity<?> calificarPropiedad(int estrellas, String comentario, String nombrePropiedad, String ubicacion){
-        Optional<Propiedad> propiedadOpt = propiedadServicio.buscarPorNombreYUbicacion(nombrePropiedad, ubicacion);
+        Optional<Propiedad> propiedadOpt = propiedadServicio.buscarPorNombreAndUbicacion(nombrePropiedad, ubicacion);
         if(propiedadOpt.isEmpty()){
             return ResponseEntity.badRequest().body("no se encontro la propiedad");
         }
