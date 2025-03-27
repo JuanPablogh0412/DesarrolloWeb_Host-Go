@@ -43,15 +43,18 @@ public class CalificacionControlador {
         return CalificacionServicio.get(id);
     }
     //BackEnd comentarios arrendadores y arrendatarios
+    @CrossOrigin
+    @PostMapping(value = "/calificar", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> calificarUsuario(
         @RequestParam int estrellas,
         @RequestParam String comentario,
-        @RequestParam String usuario){
-            if (estrellas<=0 || comentario.isEmpty() || usuario.isEmpty()) {
-                return ResponseEntity.badRequest().body("Todos los espacion son obligatorios");
-            }
-            return CalificacionServicio.calificarUsuario(estrellas, comentario, usuario);
+        @RequestParam String usuario) {
+
+        if (estrellas <= 0 || comentario.isEmpty() || usuario.isEmpty()) {
+            return ResponseEntity.badRequest().body("Todos los espacios son obligatorios");
         }
+        return CalificacionServicio.calificarUsuario(estrellas, comentario, usuario);
+    }
     
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public CalificacionDto save(@RequestBody CalificacionDto CalificacionDto) throws ValidationException{

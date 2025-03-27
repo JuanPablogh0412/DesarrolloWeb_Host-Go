@@ -68,6 +68,8 @@ public class CaliPropiedadControlador {
     }
 
     //Backend calificar propiedad
+    @CrossOrigin
+    @PostMapping(value = "/calificarProp", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> calificarPropiedad(
         @RequestParam int estrellas,
         @RequestParam String comentario,

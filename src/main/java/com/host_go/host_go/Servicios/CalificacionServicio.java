@@ -64,19 +64,17 @@ public class CalificacionServicio {
 
     public ResponseEntity<?> calificarUsuario(int estrellas, String comentario, String usuario){
         Optional<Cuenta> cuentaOpt = cuentaServicio.buscarPorUsuario(usuario);
-        if(cuentaOpt.isEmpty()){
+        if (cuentaOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("Usuario a calificar no encontrado");
-        }
-        long caliId = CalificacionRepositorio.count()+1;
+    }
+
         Calificacion calificacion = new Calificacion();
-        calificacion.setCalificacion_id(caliId);
         calificacion.setEstrellas(estrellas);
         calificacion.setComentario(comentario);
         calificacion.setCuenta(cuentaOpt.get());
 
         CalificacionRepositorio.save(calificacion);
-        return ResponseEntity.ok("Calificacion guardada correctamente");
-
+        return ResponseEntity.ok("Calificación guardada correctamente");
     }
 
     public void delete (Long id){

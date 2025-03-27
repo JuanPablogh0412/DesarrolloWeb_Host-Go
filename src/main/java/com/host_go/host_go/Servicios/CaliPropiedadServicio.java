@@ -75,9 +75,7 @@ public class CaliPropiedadServicio {
         if(propiedadOpt.isEmpty()){
             return ResponseEntity.badRequest().body("no se encontro la propiedad");
         }
-        long caliPropId = CaliPropiedadRepositorio.count()+1;
         CaliPropiedad calificacion = new CaliPropiedad();
-        calificacion.setCaliPropiedad_id(caliPropId);
         calificacion.setEstrellas(estrellas);
         calificacion.setComentario(comentario);
         calificacion.setPropiedad(propiedadOpt.get());
