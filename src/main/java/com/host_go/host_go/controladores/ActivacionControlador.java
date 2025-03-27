@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.host_go.host_go.Config.JwtUtils;
+import com.host_go.host_go.config.JwtUtils;
 import com.host_go.host_go.Dtos.ArrendadorDto;
 import com.host_go.host_go.Dtos.ArrendatarioDto;
 import com.host_go.host_go.Dtos.LoginRequestDto;

@@ -1,4 +1,4 @@
-package com.host_go.host_go.Config;
+package com.host_go.host_go.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
