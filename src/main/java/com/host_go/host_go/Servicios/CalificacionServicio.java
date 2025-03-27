@@ -11,16 +11,21 @@ import org.springframework.stereotype.Service;
 
 import com.host_go.host_go.Dtos.CalificacionDto;
 import com.host_go.host_go.Repositorios.CalificacionRepositorio;
+import com.host_go.host_go.Repositorios.CuentaRepositorio;
 import com.host_go.host_go.modelos.Calificacion;
+import com.host_go.host_go.modelos.Cuenta;
 import com.host_go.host_go.modelos.Status;
 
 @Service
 public class CalificacionServicio {
 
+
     @Autowired
     CalificacionRepositorio CalificacionRepositorio;
     @Autowired
     ModelMapper modelMapper;
+    @Autowired
+    private CuentaRepositorio cuentaRepositorio;
 
     public CalificacionDto get(Long id){
         Optional<Calificacion> CalificacionOptional = CalificacionRepositorio.findById(id);
@@ -37,18 +42,32 @@ public class CalificacionServicio {
         return CalificacionDtos;
     }
 
-    public CalificacionDto save( CalificacionDto CalificacionDto){
-        Calificacion Calificacion = modelMapper.map(CalificacionDto, Calificacion.class);
-        Calificacion.setStatus(Status.ACTIVE);
-        Calificacion = CalificacionRepositorio.save(Calificacion);
-        CalificacionDto.setCalificacionId(Calificacion.getCalificacionId());
-        return CalificacionDto;
+    public CalificacionDto save(CalificacionDto calificacionDto) {
+        // Validar estrellas
+        if (calificacionDto.getEstrellas() < 1 || calificacionDto.getEstrellas() > 5) {
+            throw new IllegalArgumentException("La calificación debe ser entre 1 y 5 estrellas");
+        }
+
+        // Obtener la cuenta desde la base de datos
+        Cuenta cuenta = cuentaRepositorio.findById(calificacionDto.getCuenta().getCuentaId())
+            .orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada"));
+
+        // Mapear DTO a entidad
+        Calificacion calificacion = modelMapper.map(calificacionDto, Calificacion.class);
+        calificacion.setCuenta(cuenta); // Asignar la cuenta obtenida
+        calificacion.setStatus(Status.ACTIVE);
+
+        // Guardar la calificación
+        calificacion = CalificacionRepositorio.save(calificacion);
+
+        // Retornar DTO actualizado
+        return modelMapper.map(calificacion, CalificacionDto.class);
     }
 
     public CalificacionDto update (CalificacionDto CalificacionDto) throws ValidationException{
         CalificacionDto = get(CalificacionDto.getCalificacionId());
         if(CalificacionDto == null){
-            throw new ValidationException(null);//no deja poner string "Registro indefinido" pide lista.
+            throw new ValidationException(null);
         }
         Calificacion Calificacion = modelMapper.map(CalificacionDto, Calificacion.class);
         Calificacion.setStatus(Status.ACTIVE);

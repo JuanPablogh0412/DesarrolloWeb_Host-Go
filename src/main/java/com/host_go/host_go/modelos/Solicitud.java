@@ -1,7 +1,6 @@
 package com.host_go.host_go.modelos;
 
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,13 +8,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@SuppressWarnings("deprecation")
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Where(clause = "status = 'ACTIVE'") // Filtra solo los activos
 @SQLDelete(sql = "UPDATE solicitud SET status = 'DELETED' WHERE solicitudId = ?") // Soft delete
 public class Solicitud {
     @Id
@@ -27,7 +24,7 @@ public class Solicitud {
     private int costoTotal;
 
     @Enumerated(EnumType.STRING)
-    private Status status = Status.ACTIVE;
+    private Status status = Status.INACTIVE;
 
     @ManyToOne
     @JoinColumn(name = "propiedadId")

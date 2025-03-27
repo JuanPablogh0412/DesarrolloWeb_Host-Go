@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface SolicitudRepositorio extends JpaRepository<Solicitud, Long>, JpaSpecificationExecutor<Solicitud>{
 List<Solicitud> findByPropiedadPropiedadId(Long propiedadId);
+List<Solicitud> findByArrendatarioArrendatarioId(Long arrendatarioId);
 }
