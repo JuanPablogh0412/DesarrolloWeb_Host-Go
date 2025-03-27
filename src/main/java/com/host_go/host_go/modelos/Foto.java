@@ -16,17 +16,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Where(clause = "status = 'ACTIVE'") // Filtra solo los activos
-@SQLDelete(sql = "UPDATE foto SET status = 'DELETED' WHERE foto_id = ?") // Soft delete
+@SQLDelete(sql = "UPDATE foto SET status = 'DELETED' WHERE fotoId = ?") // Soft delete
 public class Foto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long foto_id;
+    private long fotoId;
     private String url;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.ACTIVE;
     
     @ManyToOne
-    @JoinColumn(name = "propiedad_id")
+    @JoinColumn(name = "propiedadId")
     private Propiedad propiedad;
 }

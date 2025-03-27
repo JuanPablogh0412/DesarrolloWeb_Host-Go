@@ -39,14 +39,14 @@ public class CuentaServicio {
 
     public CuentaDto save( CuentaDto CuentaDto){
         Cuenta Cuenta = modelMapper.map(CuentaDto, Cuenta.class);
-        Cuenta.setStatus(Status.ACTIVE);
+        Cuenta.setStatus(Status.INACTIVE);
         Cuenta = CuentaRepositorio.save(Cuenta);
-        CuentaDto.setCuenta_id(Cuenta.getCuenta_id());
+        CuentaDto.setCuentaId(Cuenta.getCuentaId());
         return CuentaDto;
     }
 
     public CuentaDto update (CuentaDto CuentaDto) throws ValidationException{
-        CuentaDto = get(CuentaDto.getCuenta_id());
+        CuentaDto = get(CuentaDto.getCuentaId());
         if(CuentaDto == null){
             throw new ValidationException(null);//no deja poner string "Registro indefinido" pide lista.
         }

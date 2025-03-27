@@ -9,13 +9,13 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.host_go.host_go.Dtos.SolicitudDto;
 import com.host_go.host_go.Repositorios.ArrendatarioRepositorio;
 import com.host_go.host_go.Repositorios.PropiedadRepositorio;
 import com.host_go.host_go.Repositorios.SolicitudRepositorio;
+import com.host_go.host_go.modelos.Arrendatario;
 import com.host_go.host_go.modelos.Propiedad;
 import com.host_go.host_go.modelos.Solicitud;
 import com.host_go.host_go.modelos.Status;
@@ -32,95 +32,130 @@ public class SolicitudServicio {
     @Autowired
     ModelMapper modelMapper;
 
-    public SolicitudDto get(Long id){
+    public SolicitudDto get(Long id) {
         Optional<Solicitud> SolicitudOptional = SolicitudRepositorio.findById(id);
         SolicitudDto SolicitudDto = null;
-        if( SolicitudOptional != null){
+        if (SolicitudOptional != null) {
             SolicitudDto = modelMapper.map(SolicitudOptional.get(), SolicitudDto.class);
         }
         return SolicitudDto;
     }
 
-    public List<SolicitudDto> get( ){
-        List<Solicitud>Solicituds = (List<Solicitud>) SolicitudRepositorio.findAll();
-        List<SolicitudDto> SolicitudDtos = Solicituds.stream().map(Solicitud -> modelMapper.map(Solicitud, SolicitudDto.class)).collect(Collectors.toList());
+    public List<SolicitudDto> get() {
+        List<Solicitud> Solicituds = (List<Solicitud>) SolicitudRepositorio.findAll();
+        List<SolicitudDto> SolicitudDtos = Solicituds.stream()
+                .map(Solicitud -> modelMapper.map(Solicitud, SolicitudDto.class)).collect(Collectors.toList());
         return SolicitudDtos;
     }
 
-    public SolicitudDto save( SolicitudDto SolicitudDto){
+    public SolicitudDto save(SolicitudDto SolicitudDto) {
         validarFechas(SolicitudDto.getFechaInicio(), SolicitudDto.getFechaFin());
-        Propiedad propiedad = validarPropiedad(SolicitudDto.getPropiedad().getPropiedad_id());
-        validarArrendatario(SolicitudDto.getArrendatario().getCedula());
-        validarCapacidad(propiedad, SolicitudDto.getCantidadPer());
-        SolicitudDto.setCostoTotal(calcularCostoTotal(propiedad, SolicitudDto.getFechaInicio(), SolicitudDto.getFechaFin()));
         Solicitud solicitud = modelMapper.map(SolicitudDto, Solicitud.class);
-        solicitud.setStatus(Status.ACTIVE);
+        Propiedad propiedad = propiedadRepositorio.findByPropiedadId(SolicitudDto.getPropiedad().getPropiedadId())
+                .orElseThrow(() -> new IllegalArgumentException("Propiedad no encontrado"));
+        solicitud.setPropiedad(propiedad);
+    
+        Arrendatario arrendatario = arrendatarioRepositorio
+                .findByArrendatarioId(SolicitudDto.getArrendatario().getArrendatarioId())
+                .orElseThrow(() -> new IllegalArgumentException("Arrendador no encontrado"));
+        solicitud.setArrendatario(arrendatario);
+    
+        validarCapacidad(propiedad, SolicitudDto.getCantidadPer());
+        int costo = calcularCostoTotal(propiedad, SolicitudDto.getFechaInicio(), SolicitudDto.getFechaFin());
+        solicitud.setCostoTotal(costo);
+        solicitud.setStatus(Status.INACTIVE);
         solicitud = SolicitudRepositorio.save(solicitud);
         return modelMapper.map(solicitud, SolicitudDto.class);
     }
+    
 
-    public SolicitudDto update (SolicitudDto SolicitudDto) throws ValidationException{
-        SolicitudDto = get(SolicitudDto.getSolicitud_id());
-        if(SolicitudDto == null){
-            throw new ValidationException(null);//no deja poner string "Registro indefinido" pide lista.
+    public SolicitudDto update(SolicitudDto SolicitudDto) throws ValidationException {
+        SolicitudDto = get(SolicitudDto.getSolicitudId());
+        if (SolicitudDto == null) {
+            throw new ValidationException(null);
         }
         Solicitud Solicitud = modelMapper.map(SolicitudDto, Solicitud.class);
-        Solicitud.setStatus(Status.ACTIVE);
+        Solicitud.setStatus(Status.INACTIVE);
         Solicitud = SolicitudRepositorio.save(Solicitud);
         SolicitudDto = modelMapper.map(Solicitud, SolicitudDto.class);
         return SolicitudDto;
     }
 
-    public void delete (Long id){
+    public void delete(Long id) {
         SolicitudRepositorio.deleteById(id);
     }
-    private void validarArrendatario(Integer cedula) {
-        arrendatarioRepositorio.findById(cedula)
-            .orElseThrow(() -> new IllegalArgumentException("Arrendatario no encontrado"));
-    }
+
     private void validarFechas(String fechaInicio, String fechaFin) {
         LocalDate inicio = LocalDate.parse(fechaInicio);
         LocalDate fin = LocalDate.parse(fechaFin);
-        
+
         if (fin.isBefore(inicio)) {
             throw new IllegalArgumentException("La fecha fin no puede ser anterior a la fecha inicio");
         }
     }
-    private Propiedad validarPropiedad(Long propiedadId) {
-        return propiedadRepositorio.findById(propiedadId)
-            .orElseThrow(() -> new IllegalArgumentException("Propiedad no encontrada"));
-    }
+
     private int calcularCostoTotal(Propiedad propiedad, String fechaInicio, String fechaFin) {
         long dias = ChronoUnit.DAYS.between(
-            LocalDate.parse(fechaInicio),
-            LocalDate.parse(fechaFin)
-        );
-        return propiedad.getPrecio() * (int) dias;
+                LocalDate.parse(fechaInicio),
+                LocalDate.parse(fechaFin));
+        return propiedad.getValorNoche() * (int) dias;
     }
+
     private void validarCapacidad(Propiedad propiedad, int cantidadPersonas) {
         if (cantidadPersonas > propiedad.getCapacidad()) {
             throw new IllegalArgumentException("La cantidad de personas excede la capacidad de la propiedad");
         }
-}
-public List<SolicitudDto> buscarSolicitudes(Long propiedadId, String cedulaArrendatario, String fechaInicio, String fechaFin) {
-    Specification<Solicitud> spec = Specification.where(null);
+    }
+
+    public List<SolicitudDto> obtenerSolicitudesPorArrendatario(Long arrendatarioId) {
+        // Se consulta en el repositorio todas las solicitudes realizadas por el arrendatario
+        List<Solicitud> solicitudes = SolicitudRepositorio.findByArrendatarioArrendatarioId(arrendatarioId);
+        return solicitudes.stream()
+                .map(s -> modelMapper.map(s, SolicitudDto.class))
+                .collect(Collectors.toList());
+    }
+
+    public List<SolicitudDto> obtenerSolicitudesPorPropiedadYArrendador(Long propiedadId, Long arrendadorId) {
+        Propiedad propiedad = propiedadRepositorio.findById(propiedadId)
+            .orElseThrow(() -> new IllegalArgumentException("Propiedad no encontrada"));
     
-    if (propiedadId != null) {
-        spec = spec.and((root, query, cb) -> 
-            cb.equal(root.get("propiedad").get("propiedad_id"), propiedadId));
+        if (!(propiedad.getArrendador().getArrendadorId() ==arrendadorId)) {
+            throw new SecurityException("No tienes permisos para ver estas solicitudes");
+        }
+    
+        List<Solicitud> solicitudes = SolicitudRepositorio.findByPropiedadPropiedadId(propiedadId);
+    
+        return solicitudes.stream()
+            .map(s -> modelMapper.map(s, SolicitudDto.class))
+            .collect(Collectors.toList());
     }
-    if (cedulaArrendatario != null) {
-        spec = spec.and((root, query, cb) -> 
-            cb.equal(root.get("arrendatario").get("cedula"), cedulaArrendatario));
+
+    public SolicitudDto aceptarSolicitud(Long solicitudId) {
+        Solicitud solicitud = SolicitudRepositorio.findById(solicitudId)
+            .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
+        
+        if (!solicitud.getStatus().equals(Status.INACTIVE)) {
+            throw new IllegalStateException("La solicitud no se encuentra en estado INACTIVE y no se puede aceptar");
+        }
+        
+        solicitud.setStatus(Status.ACTIVE);
+        solicitud = SolicitudRepositorio.save(solicitud);
+        return modelMapper.map(solicitud, SolicitudDto.class);
     }
-    if (fechaInicio != null && fechaFin != null) {
-        LocalDate inicio = LocalDate.parse(fechaInicio);
-        LocalDate fin = LocalDate.parse(fechaFin);
-        spec = spec.and((root, query, cb) -> 
-            cb.between(root.get("fechaInicio"), inicio, fin));
+    
+    public SolicitudDto cancelarSolicitud(Long solicitudId) {
+        Solicitud solicitud = SolicitudRepositorio.findById(solicitudId)
+            .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada"));
+        
+        if (!solicitud.getStatus().equals(Status.INACTIVE)) {
+            throw new IllegalStateException("La solicitud no se encuentra en estado INACTIVE y no se puede cancelar");
+        }
+        
+        solicitud.setStatus(Status.DELETED);
+        solicitud = SolicitudRepositorio.save(solicitud);
+        return modelMapper.map(solicitud, SolicitudDto.class);
     }
-    return SolicitudRepositorio.findAll(spec).stream()
-        .map(s -> modelMapper.map(s, SolicitudDto.class))
-        .collect(Collectors.toList());
-}
+    
+    
+    
 }

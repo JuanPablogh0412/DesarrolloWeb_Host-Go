@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CaliPropiedadDto {
-    private long caliPropiedad_id;
+    private long caliPropiedadId;
     private int estrellas;
     private String comentario;
     private PropiedadDto propiedad;
