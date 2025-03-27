@@ -20,7 +20,7 @@ import lombok.Setter;
 public class Calificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long calificacion_id;
+    private Long calificacion_id;
     private int estrellas;
     private String comentario;
 

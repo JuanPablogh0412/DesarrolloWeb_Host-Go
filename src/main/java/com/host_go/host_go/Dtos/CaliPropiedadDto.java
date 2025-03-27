@@ -13,5 +13,5 @@ public class CaliPropiedadDto {
     private long caliPropiedad_id;
     private int estrellas;
     private String comentario;
-    private PropiedadDto propiedad;
+    private Long propiedadId;
 }
