@@ -81,7 +81,7 @@ public class ArrendatarioServicio {
         ActivationToken activationToken = createActivationToken(cuenta);
         
         // Enviar correo
-        String activationLink = "http://localhost:8080/auth/activate?token=" + activationToken.getToken();
+        String activationLink = "http://localhost:4200/activar-cuenta?token=" + activationToken.getToken();
         emailService.sendActivationEmail(cuenta.getUsuario(), activationLink);
 
         // Crear el arrendatario

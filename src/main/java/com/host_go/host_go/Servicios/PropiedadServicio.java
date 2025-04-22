@@ -15,6 +15,7 @@ import com.host_go.host_go.Repositorios.PropiedadRepositorio;
 import com.host_go.host_go.Repositorios.ArrendadorRepositorio;
 
 import com.host_go.host_go.modelos.Arrendador;
+import com.host_go.host_go.modelos.Foto;
 import com.host_go.host_go.modelos.Propiedad;
 import com.host_go.host_go.modelos.Status;
 
@@ -30,19 +31,21 @@ public class PropiedadServicio {
     private static final String DANE_API_URL = "https://www.datos.gov.co/resource/xdk5-pm3f.json";
 
     public PropiedadDto get(Long id){
-        Optional<Propiedad> PropiedadOptional = PropiedadRepositorio.findById(id);
-        PropiedadDto PropiedadDto = null;
-        if( PropiedadOptional != null){
-            PropiedadDto = modelMapper.map(PropiedadOptional.get(), PropiedadDto.class);
+        Optional<Propiedad> propiedadOptional = PropiedadRepositorio.findById(id);
+        if (propiedadOptional.isPresent()) {
+            return convertirAPropiedadDto(propiedadOptional.get());
         }
-        return PropiedadDto;
+        return null;
     }
+    
 
-    public List<PropiedadDto> get( ){
-        List<Propiedad>Propiedads = (List<Propiedad>) PropiedadRepositorio.findAll();
-        List<PropiedadDto> PropiedadDtos = Propiedads.stream().map(Propiedad -> modelMapper.map(Propiedad, PropiedadDto.class)).collect(Collectors.toList());
-        return PropiedadDtos;
+    public List<PropiedadDto> get(){
+        List<Propiedad> propiedades = PropiedadRepositorio.findAll();
+        return propiedades.stream()
+            .map(this::convertirAPropiedadDto)
+            .collect(Collectors.toList());
     }
+    
 
     public PropiedadDto save(PropiedadDto propiedadDto) {
         validarDatos(propiedadDto);
@@ -52,15 +55,12 @@ public class PropiedadServicio {
         Arrendador arrendador = arrendadorRepositorio.findByArrendadorId(propiedadDto.getArrendador().getArrendadorId())
             .orElseThrow(() -> new IllegalArgumentException("Arrendador no encontrado"));
         propiedad.setArrendador(arrendador);
-    
         propiedad.setStatus(Status.ACTIVE);
     
         propiedad = PropiedadRepositorio.save(propiedad);
-    
-        PropiedadDto savedPropiedadDto = modelMapper.map(propiedad, PropiedadDto.class);
-    
-        return savedPropiedadDto;
+        return convertirAPropiedadDto(propiedad);
     }
+    
 
     public PropiedadDto update(PropiedadDto propiedadDto) {
         Propiedad propiedadExistente = PropiedadRepositorio.findById(propiedadDto.getPropiedadId())
@@ -81,10 +81,10 @@ public class PropiedadServicio {
         propiedadExistente.setTieneAsador(propiedadDto.isTieneAsador());
         propiedadExistente.setValorNoche(propiedadDto.getValorNoche());
     
-        Propiedad propiedadActualizada = PropiedadRepositorio.save(propiedadExistente);
-        
-        return modelMapper.map(propiedadActualizada, PropiedadDto.class);
+        Propiedad actualizada = PropiedadRepositorio.save(propiedadExistente);
+        return convertirAPropiedadDto(actualizada);
     }
+    
     
     // Método de validación simplificado (sin validar arrendador)
     private void validarDatosBasicos(PropiedadDto propiedadDto) {
@@ -163,5 +163,20 @@ public class PropiedadServicio {
         return modelMapper.map(propiedadActualizada, PropiedadDto.class);
 
     }
+
+    private PropiedadDto convertirAPropiedadDto(Propiedad propiedad) {
+    PropiedadDto dto = modelMapper.map(propiedad, PropiedadDto.class);
+
+    if (propiedad.getFotos() != null) {
+        List<String> urls = propiedad.getFotos().stream()
+            .map(Foto::getUrl)
+            .collect(Collectors.toList());
+        dto.setFotos(urls);
+    }
+
+    return dto;
+}
+
+    
 
 }

@@ -1,50 +1,69 @@
 package com.host_go.host_go.Config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.host_go.host_go.Config.JwtAuthenticationFilter;
 import com.host_go.host_go.Servicios.CuentaUserDetailsService;
 
-// SecurityConfig.java
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private CuentaUserDetailsService cuentaUserDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CuentaUserDetailsService userDetailsService;
 
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtUtils jwtUtils) {
-        return new JwtAuthenticationFilter(jwtUtils, cuentaUserDetailsService);
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                          CuentaUserDetailsService userDetailsService) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.userDetailsService = userDetailsService;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors()                                    // <-- Habilita CORS!
+            .and()
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/Arrendador", "/Arrendatario").permitAll()
+                .requestMatchers("/auth/**", "/Arrendador/**", "/Arrendatario/**", "/Propiedad/**")
+                  .permitAll()
                 .anyRequest().authenticated()
             )
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtAuthenticationFilter(jwtUtils()), UsernamePasswordAuthenticationFilter.class); // Pasa jwtUtils como parámetro
+            .sessionManagement(sm -> sm
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .addFilterBefore(jwtAuthenticationFilter,
+                             org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
+        ;
 
         return http.build();
     }
 
+    /**
+     * Esta bean define la política global de CORS para toda tu API.
+     * Permite peticiones desde http://localhost:4200 y los métodos estándar.
+     */
     @Bean
-    public JwtUtils jwtUtils() {
-        return new JwtUtils();
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration cfg = new CorsConfiguration();
+        cfg.setAllowedOrigins(List.of("http://localhost:4200"));      // Fronend Angular
+        cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        cfg.setAllowedHeaders(List.of("*"));
+        cfg.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cfg);
+        return source;
     }
 
     @Bean
@@ -53,7 +72,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }

@@ -1,6 +1,8 @@
 package com.host_go.host_go.Dtos;
 
 
+import java.util.List;
+
 import com.host_go.host_go.modelos.Status;
 
 import lombok.AllArgsConstructor;
@@ -30,4 +32,5 @@ public class PropiedadDto {
     private Status status;
 
     private ArrendadorDto arrendador;
+    private List<String> fotos;
 }

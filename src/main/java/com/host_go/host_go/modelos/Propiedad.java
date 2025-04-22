@@ -1,5 +1,7 @@
 package com.host_go.host_go.modelos;
 
+import java.util.List;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -40,4 +42,8 @@ public class Propiedad {
     @ManyToOne
     @JoinColumn(name = "arrendadorId")
     private Arrendador arrendador;
+
+    @OneToMany(mappedBy = "propiedad", fetch = FetchType.LAZY)
+    private List<Foto> fotos;
+
 }
