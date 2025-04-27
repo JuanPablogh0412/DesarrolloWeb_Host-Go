@@ -73,4 +73,10 @@ public class CalificacionControlador {
         CalificacionServicio.delete(id);
     }
     
+    @GetMapping(value = "/porUsuario", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CalificacionDto> getByNombreusuario(
+        @RequestParam String nombreUsuario
+    ){
+        return CalificacionServicio.obtenerComentariosporUsuario(nombreUsuario);
+    }
 }

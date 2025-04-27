@@ -2,6 +2,7 @@ package com.host_go.host_go.Servicios;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -79,6 +80,17 @@ public class CalificacionServicio {
 
     public void delete (Long id){
         CalificacionRepositorio.deleteById(id);
+    }
+
+    public List<CalificacionDto> obtenerComentariosporUsuario(String nombreUsuario){
+        Optional<Cuenta> usuarioOpt = cuentaServicio.buscarPorUsuario(nombreUsuario);
+        if(usuarioOpt.isEmpty()){
+            return List.of();
+        }
+        List<Calificacion> comentarios = CalificacionRepositorio.findByCuenta(usuarioOpt.get());
+            return comentarios.stream()
+            .map(c -> modelMapper.map(c, CalificacionDto.class))
+            .collect(Collectors.toList());
     }
 
 }

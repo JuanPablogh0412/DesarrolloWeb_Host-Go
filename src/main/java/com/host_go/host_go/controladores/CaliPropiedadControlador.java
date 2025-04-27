@@ -81,6 +81,14 @@ public class CaliPropiedadControlador {
         }
         return CaliPropiedadServicio.calificarPropiedad(estrellas, comentario, nombrePropiedad, ubicacion);
     }
+    @GetMapping(value = "/porPropiedad", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CaliPropiedadDto> getByNombreyUbicacion(
+        @RequestParam String nombrePropiedad,
+        @RequestParam String ubicacion
+    ) {
+        return CaliPropiedadServicio.obtenerComentariosporPropiedad(nombrePropiedad, ubicacion);
+    }
+    
 }
     
 

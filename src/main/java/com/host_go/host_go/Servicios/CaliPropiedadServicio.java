@@ -2,6 +2,7 @@ package com.host_go.host_go.Servicios;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 
@@ -81,6 +82,16 @@ public class CaliPropiedadServicio {
         calificacion.setPropiedad(propiedadOpt.get());
         CaliPropiedadRepositorio.save(calificacion);
         return ResponseEntity.ok("Calificacion guardada correctamente");
+    }
+    public List<CaliPropiedadDto> obtenerComentariosporPropiedad(String nombre, String ubicacion){
+        Optional<Propiedad> propiedadOpt = propiedadServicio.buscarPorNombreAndUbicacion(nombre, ubicacion);
+        if (propiedadOpt.isEmpty()) {
+            return List.of();
+        }
+        List<CaliPropiedad> comentarios = CaliPropiedadRepositorio.findByPropiedad(propiedadOpt.get());
+        return comentarios.stream()
+            .map(c -> modelMapper.map(c, CaliPropiedadDto.class))
+            .collect(Collectors.toList());
     }
 
 }
