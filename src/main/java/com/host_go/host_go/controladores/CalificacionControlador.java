@@ -75,8 +75,8 @@ public class CalificacionControlador {
     
     @GetMapping(value = "/porUsuario", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CalificacionDto> getByNombreusuario(
-        @RequestParam String nombreUsuario
+        @RequestParam String usuario
     ){
-        return CalificacionServicio.obtenerComentariosporUsuario(nombreUsuario);
+        return CalificacionServicio.obtenerComentariosporUsuario(usuario);
     }
 }

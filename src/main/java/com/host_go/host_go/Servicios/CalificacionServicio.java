@@ -82,8 +82,8 @@ public class CalificacionServicio {
         CalificacionRepositorio.deleteById(id);
     }
 
-    public List<CalificacionDto> obtenerComentariosporUsuario(String nombreUsuario){
-        Optional<Cuenta> usuarioOpt = cuentaServicio.buscarPorUsuario(nombreUsuario);
+    public List<CalificacionDto> obtenerComentariosporUsuario(String usuario){
+        Optional<Cuenta> usuarioOpt = cuentaServicio.buscarPorUsuario(usuario);
         if(usuarioOpt.isEmpty()){
             return List.of();
         }
