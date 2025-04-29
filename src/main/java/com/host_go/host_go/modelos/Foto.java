@@ -3,6 +3,8 @@ package com.host_go.host_go.modelos;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,5 +30,6 @@ public class Foto {
     
     @ManyToOne
     @JoinColumn(name = "propiedadId")
+    @JsonIgnore    
     private Propiedad propiedad;
 }

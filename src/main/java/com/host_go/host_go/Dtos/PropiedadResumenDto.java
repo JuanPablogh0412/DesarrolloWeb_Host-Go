@@ -1,5 +1,8 @@
 package com.host_go.host_go.Dtos;
 
+import java.util.List;
+
+import com.host_go.host_go.modelos.Foto;
 import com.host_go.host_go.modelos.Propiedad;
 
 import lombok.AllArgsConstructor;
@@ -16,8 +19,8 @@ public class PropiedadResumenDto {
     private String nombre;
     private String departamento;
     private String municipio;
-    private String enlaceEditar;
-    private String enlaceDetalle;
+    private int valorNoche;
+     private List<Foto> fotos;
 
     // Constructor para facilitar el mapeo
     public PropiedadResumenDto(Propiedad propiedad) {
@@ -25,7 +28,7 @@ public class PropiedadResumenDto {
         this.nombre = propiedad.getNombre();
         this.departamento = propiedad.getDepartamento();
         this.municipio = propiedad.getMunicipio();
-        this.enlaceEditar = "/Propiedad/" + propiedadId + "/editar"; //cambiar en el frontend
-        this.enlaceDetalle = "/Propiedad/" + propiedadId; //cambiar en el frontend
+        this.valorNoche = propiedad.getValorNoche();
+        this.fotos = propiedad.getFotos();
     }
 }
